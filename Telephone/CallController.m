@@ -479,6 +479,7 @@ static const NSTimeInterval kRedialButtonReenableTime = 1.0;
     [self setCallStartTime:[NSDate timeIntervalSinceReferenceDate]];
     [self showActiveCallView];
     [self.activeCallViewController showHangUp];
+    [self.activeCallViewController updateCallControls];
     [self setStatus:@"00:00"];
     [[self activeCallViewController] startCallTimer];
 }
@@ -486,6 +487,7 @@ static const NSTimeInterval kRedialButtonReenableTime = 1.0;
 - (void)SIPCallDidDisconnect:(NSNotification *)notification {
     [self setCallActive:NO];
     [[self activeCallViewController] stopCallTimer];
+    [self.activeCallViewController updateCallControls];
     
     NSString *preferredLocalization = [[NSBundle mainBundle] preferredLocalizations][0];
     
@@ -563,18 +565,21 @@ static const NSTimeInterval kRedialButtonReenableTime = 1.0;
         
         [self setIntermediateStatus:NSLocalizedString(@"off hold", @"Call has been taken off hold status text.")];
     }
+    [self.activeCallViewController updateCallControls];
 }
 
 - (void)SIPCallDidLocalHold:(NSNotification *)notification {
     [self setCallOnHold:YES];
     [[self activeCallViewController] stopCallTimer];
     [self setStatus:NSLocalizedString(@"on hold", @"Call on local hold status text.")];
+    [self.activeCallViewController updateCallControls];
 }
 
 - (void)SIPCallDidRemoteHold:(NSNotification *)notification {
     [self setCallOnHold:YES];
     [[self activeCallViewController] stopCallTimer];
     [self setStatus:NSLocalizedString(@"on remote hold", @"Call on remote hold status text.")];
+    [self.activeCallViewController updateCallControls];
 }
 
 - (void)SIPCallTransferStatusDidChange:(NSNotification *)notification {

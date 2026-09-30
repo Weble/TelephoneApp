@@ -68,4 +68,7 @@
 - (void)allowHangUp;
 - (void)disallowHangUp;
 
+// Updates in-call button titles and availability from the current SIP call state.
+- (void)updateCallControls;
+
 @end

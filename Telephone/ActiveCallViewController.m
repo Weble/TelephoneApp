@@ -36,10 +36,29 @@
 
 @property(nonatomic) IBOutlet NSProgressIndicator *callProgressIndicator;
 @property(nonatomic) IBOutlet NSButton *hangUpButton;
+@property(nonatomic, weak) IBOutlet NSButton *holdButton;
+@property(nonatomic, weak) IBOutlet NSButton *muteButton;
+@property(nonatomic, weak) IBOutlet NSButton *transferButton;
 
 @end
 
 @implementation ActiveCallViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    self.muteButton.image = [NSImage imageWithSystemSymbolName:@"mic.slash.fill"
+                                     accessibilityDescription:NSLocalizedString(@"Mute", @"Mute. Call control button.")];
+    self.holdButton.image = [NSImage imageWithSystemSymbolName:@"pause.fill"
+                                     accessibilityDescription:NSLocalizedString(@"Hold", @"Hold. Call control button.")];
+    self.transferButton.image = [NSImage imageWithSystemSymbolName:@"arrow.right.arrow.left"
+                                         accessibilityDescription:NSLocalizedString(@"Transfer", @"Transfer. Call control button.")];
+    self.hangUpButton.image = [NSImage imageWithSystemSymbolName:@"phone.down.fill"
+                                       accessibilityDescription:NSLocalizedString(@"End Call", @"End Call. Call control button.")];
+    self.hangUpButton.contentTintColor = NSColor.systemRedColor;
+
+    [self updateCallControls];
+}
 
 - (instancetype)initWithNibName:(NSString *)nibName callController:(CallController *)callController {
     self = [super initWithNibName:nibName bundle:nil];
@@ -68,10 +87,12 @@
 
 - (IBAction)toggleCallHold:(id)sender {
     [[self callController] toggleCallHold];
+    [self updateCallControls];
 }
 
 - (IBAction)toggleMicrophoneMute:(id)sender {
     [[self callController] toggleMicrophoneMute];
+    [self updateCallControls];
 }
 
 - (IBAction)showCallTransferSheet:(id)sender {
@@ -137,7 +158,7 @@
 }
 
 - (void)showCallProgressIndicator {
-    self.hangUpButton.hidden = YES;
+    self.hangUpButton.hidden = NO;
     self.callProgressIndicator.hidden = NO;
 }
 
@@ -165,6 +186,28 @@
 
 - (void)disallowHangUp {
     self.hangUpButton.enabled = NO;
+}
+
+- (void)updateCallControls {
+    AKSIPCall *call = self.callController.call;
+    BOOL isConfirmed = call.state == kAKSIPCallConfirmedState;
+    BOOL isRemoteHold = call.isOnRemoteHold;
+
+    self.muteButton.enabled = isConfirmed;
+    self.muteButton.title = call.isMicrophoneMuted
+        ? NSLocalizedString(@"Unmute", @"Unmute. Call control button.")
+        : NSLocalizedString(@"Mute", @"Mute. Call control button.");
+    self.muteButton.state = call.isMicrophoneMuted ? NSControlStateValueOn : NSControlStateValueOff;
+
+    self.holdButton.enabled = isConfirmed && !isRemoteHold;
+    self.holdButton.title = call.isOnLocalHold
+        ? NSLocalizedString(@"Resume", @"Resume. Call control button.")
+        : NSLocalizedString(@"Hold", @"Hold. Call control button.");
+    self.holdButton.image = [NSImage imageWithSystemSymbolName:(call.isOnLocalHold ? @"play.fill" : @"pause.fill")
+                                     accessibilityDescription:self.holdButton.title];
+    self.holdButton.state = call.isOnLocalHold ? NSControlStateValueOn : NSControlStateValueOff;
+
+    self.transferButton.enabled = isConfirmed && !isRemoteHold;
 }
 
 

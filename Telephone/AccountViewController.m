@@ -39,7 +39,6 @@ static NSArray<NSLayoutConstraint *> *FullSizeConstraintsForView(NSView *view);
 @property(nonatomic, weak) IBOutlet NSView *activeAccountView;
 @property(nonatomic, weak) IBOutlet NSView *callHistoryView;
 @property(nonatomic, weak) IBOutlet NSLayoutConstraint *bottomViewHeightConstraint;
-@property(nonatomic, weak) IBOutlet NSButton *showMoreButton;
 
 @property(nonatomic, weak) IBOutlet NSLayoutConstraint *activeAccountViewHeightConstraint;
 @property(nonatomic, weak) IBOutlet NSLayoutConstraint *horizontalLineHeightConstraint;
@@ -93,10 +92,7 @@ static NSArray<NSLayoutConstraint *> *FullSizeConstraintsForView(NSView *view);
     [self.callHistoryViewController updateNextKeyView:self.activeAccountViewController.keyView];
 
     self.bottomViewPresenter
-    = [[AccountViewBottomViewPresenter alloc] initWithConstraint:self.bottomViewHeightConstraint
-                                                          height:self.bottomViewHeightConstraint.constant
-                                                          button:self.showMoreButton
-                                                      controller:self.callHistoryViewController];
+    = [[AccountViewBottomViewPresenter alloc] initWithConstraint:self.bottomViewHeightConstraint];
     [self.bottomViewPresenter hideWithoutAnimation];
 
     [self.purchaseCheckUseCaseFactory makeWithAccount:self.account output:self.bottomViewPresenter completion:^(id<UseCase> _Nonnull useCase) {
@@ -136,10 +132,6 @@ static NSArray<NSLayoutConstraint *> *FullSizeConstraintsForView(NSView *view);
     self.activeAccountViewController.callDestinationField.tokenStyle = NSTokenStyleRounded;
     self.activeAccountViewController.callDestinationField.stringValue = destination;
     [self.activeAccountViewController makeCall:self];
-}
-
-- (IBAction)showStoreWindow:(id)sender {
-    [self.storeWindowPresenter present];
 }
 
 @end

@@ -153,14 +153,14 @@
 /* Network settings change confirmation. */
 "Save changes to the network settings?" = "Сохранить сетевые настройки?";
 
-/* Show more call history records button. */
-"Show %d more…" = "Показать еще %d…";
-
 /* Sound preferences window title. */
 "Sound" = "Звук";
 
 /* Preferences default window title. */
 "Telephone Preferences" = "Настройки Телефона";
+
+/* Transfer. Call control button. */
+"Transfer" = "Перевести";
 
 /* Registrar authentication failed. */
 "Telephone was unable to login to %@. Change user name or password and try again." = "Телефон не смог зарегистрироваться на сервере %@. Проверьте имя пользователя и пароль.";

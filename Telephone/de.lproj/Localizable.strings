@@ -153,14 +153,14 @@
 /* Network settings change confirmation. */
 "Save changes to the network settings?" = "Änderungen an den Netzwerkeinstellungen sichern?";
 
-/* Show more call history records button. */
-"Show %d more…" = "%d mehr anzeigen …";
-
 /* Sound preferences window title. */
 "Sound" = "Ton";
 
 /* Preferences default window title. */
 "Telephone Preferences" = "Telefon Einstellungen";
+
+/* Transfer. Call control button. */
+"Transfer" = "Weiterleiten";
 
 /* Registrar authentication failed. */
 "Telephone was unable to login to %@. Change user name or password and try again." = "Telefon konnte sich nicht in %@ anmelden. Ändern Sie Benutzername oder Passwort und versuchen Sie es erneut.";

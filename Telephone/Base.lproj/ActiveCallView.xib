@@ -10,18 +10,21 @@
                 <outlet property="callProgressIndicator" destination="57" id="58"/>
                 <outlet property="displayedNameField" destination="59" id="129"/>
                 <outlet property="hangUpButton" destination="122" id="125"/>
+                <outlet property="holdButton" destination="hold-button" id="hold-outlet"/>
+                <outlet property="muteButton" destination="mute-button" id="mute-outlet"/>
                 <outlet property="statusField" destination="61" id="130"/>
+                <outlet property="transferButton" destination="transfer-button" id="transfer-outlet"/>
                 <outlet property="view" destination="41" id="124"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="41" userLabel="Active Call View" customClass="AKActiveCallView">
-            <rect key="frame" x="0.0" y="0.0" width="300" height="84"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <rect key="frame" x="0.0" y="0.0" width="360" height="142"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="59">
-                    <rect key="frame" x="18" y="45" width="105" height="19"/>
+                    <rect key="frame" x="18" y="103" width="105" height="19"/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Display Name" id="60">
                         <font key="font" metaFont="systemBold" size="15"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -32,10 +35,10 @@
                     </connections>
                 </textField>
                 <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="61">
-                    <rect key="frame" x="18" y="25" width="43" height="16"/>
+                    <rect key="frame" x="18" y="83" width="43" height="16"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Status" id="62">
                         <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
@@ -43,43 +46,90 @@
                     </connections>
                 </textField>
                 <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" minValue="16" maxValue="100" doubleValue="16" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="57">
-                    <rect key="frame" x="264" y="47" width="16" height="16"/>
+                    <rect key="frame" x="324" y="105" width="16" height="16"/>
                 </progressIndicator>
-                <button hidden="YES" toolTip="End Call" translatesAutoresizingMaskIntoConstraints="NO" id="122" userLabel="Hang Up Button">
-                    <rect key="frame" x="265" y="44" width="15" height="21"/>
-                    <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="NSStopProgressFreestandingTemplate" imagePosition="only" alignment="center" imageScaling="proportionallyUpOrDown" inset="2" id="123">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="15" id="Kcw-oG-dKT"/>
-                        <constraint firstAttribute="height" constant="15" id="cO1-CF-Wg2"/>
-                    </constraints>
-                    <connections>
-                        <action selector="hangUpCall:" target="-2" id="126"/>
-                    </connections>
-                </button>
+                <box boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="controls-separator">
+                    <rect key="frame" x="20" y="69" width="320" height="5"/>
+                </box>
+                <stackView distribution="fillEqually" orientation="horizontal" alignment="centerY" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="controls-stack">
+                    <rect key="frame" x="16" y="16" width="328" height="40"/>
+                    <subviews>
+                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mute-button">
+                            <rect key="frame" x="0.0" y="4" width="76" height="32"/>
+                            <buttonCell key="cell" type="push" title="Mute" bezelStyle="rounded" imagePosition="left" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="mute-cell">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="toggleMicrophoneMute:" target="-2" id="mute-action"/>
+                            </connections>
+                        </button>
+                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hold-button">
+                            <rect key="frame" x="84" y="4" width="76" height="32"/>
+                            <buttonCell key="cell" type="push" title="Hold" bezelStyle="rounded" imagePosition="left" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hold-cell">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="toggleCallHold:" target="-2" id="hold-action"/>
+                            </connections>
+                        </button>
+                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="transfer-button">
+                            <rect key="frame" x="168" y="4" width="76" height="32"/>
+                            <buttonCell key="cell" type="push" title="Transfer" bezelStyle="rounded" imagePosition="left" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="transfer-cell">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="showCallTransferSheet:" target="-2" id="transfer-action"/>
+                            </connections>
+                        </button>
+                        <button toolTip="End Call" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="122" userLabel="Hang Up Button">
+                            <rect key="frame" x="252" y="4" width="76" height="32"/>
+                            <buttonCell key="cell" type="push" title="End Call" bezelStyle="rounded" imagePosition="left" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="123">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="hangUpCall:" target="-2" id="126"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <visibilityPriorities>
+                        <integer value="1000"/>
+                        <integer value="1000"/>
+                        <integer value="1000"/>
+                        <integer value="1000"/>
+                    </visibilityPriorities>
+                    <customSpacing>
+                        <real value="3.4028234663852886e+38"/>
+                        <real value="3.4028234663852886e+38"/>
+                        <real value="3.4028234663852886e+38"/>
+                    </customSpacing>
+                </stackView>
             </subviews>
             <constraints>
-                <constraint firstItem="59" firstAttribute="leading" secondItem="41" secondAttribute="leading" constant="20" symbolic="YES" id="AiP-zv-wua"/>
-                <constraint firstItem="59" firstAttribute="centerY" secondItem="57" secondAttribute="centerY" id="E9l-cS-a0I"/>
-                <constraint firstItem="57" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="59" secondAttribute="trailing" constant="8" id="Hfp-f7-QEH"/>
-                <constraint firstItem="61" firstAttribute="top" secondItem="59" secondAttribute="bottom" constant="4" id="Lrn-o0-bfs"/>
-                <constraint firstItem="59" firstAttribute="top" secondItem="41" secondAttribute="top" constant="20" symbolic="YES" id="QCp-dw-HUr"/>
-                <constraint firstItem="61" firstAttribute="leading" secondItem="59" secondAttribute="leading" id="aSy-e4-YVf"/>
-                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="61" secondAttribute="trailing" constant="20" symbolic="YES" id="bZf-ZN-d5e"/>
-                <constraint firstAttribute="trailing" secondItem="122" secondAttribute="trailing" constant="20" symbolic="YES" id="gd7-IK-2ue"/>
-                <constraint firstItem="122" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="59" secondAttribute="trailing" constant="8" id="iYB-vr-3Ti"/>
-                <constraint firstItem="122" firstAttribute="centerY" secondItem="59" secondAttribute="centerY" id="jxJ-55-s0i"/>
-                <constraint firstAttribute="trailing" secondItem="57" secondAttribute="trailing" constant="20" symbolic="YES" id="v0w-nx-gEy"/>
+                <constraint firstItem="59" firstAttribute="leading" secondItem="41" secondAttribute="leading" constant="20" id="name-leading"/>
+                <constraint firstItem="59" firstAttribute="top" secondItem="41" secondAttribute="top" constant="20" id="name-top"/>
+                <constraint firstItem="57" firstAttribute="centerY" secondItem="59" secondAttribute="centerY" id="spinner-center"/>
+                <constraint firstAttribute="trailing" secondItem="57" secondAttribute="trailing" constant="20" id="spinner-trailing"/>
+                <constraint firstItem="57" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="59" secondAttribute="trailing" constant="8" id="spinner-gap"/>
+                <constraint firstItem="61" firstAttribute="leading" secondItem="59" secondAttribute="leading" id="status-leading"/>
+                <constraint firstItem="61" firstAttribute="top" secondItem="59" secondAttribute="bottom" constant="4" id="status-top"/>
+                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="61" secondAttribute="trailing" constant="20" id="status-trailing"/>
+                <constraint firstItem="controls-separator" firstAttribute="leading" secondItem="41" secondAttribute="leading" constant="20" id="separator-leading"/>
+                <constraint firstAttribute="trailing" secondItem="controls-separator" secondAttribute="trailing" constant="20" id="separator-trailing"/>
+                <constraint firstItem="controls-separator" firstAttribute="top" secondItem="61" secondAttribute="bottom" constant="10" id="separator-top"/>
+                <constraint firstItem="controls-stack" firstAttribute="leading" secondItem="41" secondAttribute="leading" constant="16" id="controls-leading"/>
+                <constraint firstAttribute="trailing" secondItem="controls-stack" secondAttribute="trailing" constant="16" id="controls-trailing"/>
+                <constraint firstItem="controls-stack" firstAttribute="top" secondItem="controls-separator" secondAttribute="bottom" constant="10" id="controls-top"/>
+                <constraint firstAttribute="bottom" secondItem="controls-stack" secondAttribute="bottom" constant="16" id="controls-bottom"/>
+                <constraint firstItem="controls-stack" firstAttribute="height" constant="40" id="controls-height"/>
             </constraints>
             <connections>
                 <outlet property="delegate" destination="-2" id="101"/>
             </connections>
-            <point key="canvasLocation" x="6" y="135"/>
+            <point key="canvasLocation" x="40" y="165"/>
         </customView>
     </objects>
-    <resources>
-        <image name="NSStopProgressFreestandingTemplate" width="20" height="20"/>
-    </resources>
 </document>

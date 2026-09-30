@@ -52,6 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, weak) IBOutlet NSMenu *windowMenu;
 @property(nonatomic, weak) IBOutlet NSMenuItem *preferencesMenuItem;
 @property(nonatomic, weak) IBOutlet HelpMenuActionRedirect *helpMenuActionRedirect;
+@property(nonatomic, strong) NSStatusItem *statusItem;
 
 @property(nonatomic, readonly) CompositionRoot *compositionRoot;
 @property(nonatomic, readonly) PreferencesController *preferencesController;
@@ -190,10 +191,6 @@ NS_ASSUME_NONNULL_END
     }
 }
 
-- (IBAction)showStoreWindow:(id)sender {
-    [self.storeWindowPresenter present];
-}
-
 - (IBAction)showPreferencePanel:(id)sender {
     [self.preferencesController showWindowCentered];
 }
@@ -228,10 +225,55 @@ NS_ASSUME_NONNULL_END
     [[NSApp dockTile] setBadgeLabel:badgeString];
 }
 
-- (void)remindAboutPurchasingAfterDelay {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self.compositionRoot.purchaseReminder execute];
-    });
+- (void)configureStatusItem {
+    self.statusItem = [NSStatusBar.systemStatusBar statusItemWithLength:NSSquareStatusItemLength];
+
+    NSStatusBarButton *button = self.statusItem.button;
+    NSImage *image = [NSImage imageWithSystemSymbolName:@"phone.fill"
+                              accessibilityDescription:NSLocalizedString(@"Telephone", @"Menu bar item accessibility label.")];
+    if (image != nil) {
+        image.template = YES;
+        button.image = image;
+    } else {
+        button.title = @"☎︎";
+    }
+    button.toolTip = NSLocalizedString(@"Telephone", @"Menu bar item tooltip.");
+
+    NSMenu *menu = [[NSMenu alloc] init];
+    NSMenuItem *showItem = [[NSMenuItem alloc]
+        initWithTitle:NSLocalizedString(@"Show Telephone", @"Menu bar item to show Telephone.")
+                action:@selector(showTelephoneFromStatusItem:)
+         keyEquivalent:@""];
+    showItem.target = self;
+    [menu addItem:showItem];
+    [menu addItem:NSMenuItem.separatorItem];
+
+    NSMenuItem *quitItem = [[NSMenuItem alloc]
+        initWithTitle:NSLocalizedString(@"Quit Telephone", @"Menu bar item to quit Telephone.")
+                action:@selector(terminate:)
+         keyEquivalent:@""];
+    quitItem.target = NSApp;
+    [menu addItem:quitItem];
+
+    self.statusItem.menu = menu;
+}
+
+- (void)showTelephoneFromStatusItem:(id)sender {
+    [NSApp activate];
+
+    if (self.userAgent.hasUnansweredIncomingCalls) {
+        [self.accountControllers showIncomingCallWindows];
+    } else if (self.accountControllers.enabled.count > 0) {
+        [self.accountControllers.enabled.firstObject showWindow];
+    } else {
+        NSArray *accounts = [NSUserDefaults.standardUserDefaults arrayForKey:UserDefaultsKeys.accounts];
+        if (accounts.count == 0) {
+            [self.accountSetupController.window center];
+            [self.accountSetupController.window makeKeyAndOrderFront:sender];
+        } else {
+            [self.preferencesController showWindowCentered];
+        }
+    }
 }
 
 - (void)showAccountPreferencesIfNeeded {
@@ -496,6 +538,7 @@ NS_ASSUME_NONNULL_END
     NSWindow.allowsAutomaticWindowTabbing = NO;
     [self.compositionRoot.defaultAppSettings registerDefaults];
     [self.compositionRoot.settingsMigration execute];
+    [self configureStatusItem];
     self.helpMenuActionRedirect.target = self.compositionRoot.helpMenuActionTarget;
     [self configureUserAgent];
     self.accountsMenuItems = [[AccountsMenuItems alloc] initWithMenu:self.windowMenu controllers:self.accountControllers];
@@ -532,7 +575,6 @@ NS_ASSUME_NONNULL_END
     [self.accountControllers updateCallsShouldDisplayAccountInfo];
     [self.accountsMenuItems update];
     [self setShouldPresentUserAgentLaunchError:YES];
-    [self remindAboutPurchasingAfterDelay];
     [self.accountControllers registerAllAccountsWhereManualRegistrationRequired];
     [self makeCallAfterLaunchIfNeeded];
     [self.compositionRoot.orphanLogFileRemoval performSelector:@selector(execute) withObject:nil afterDelay:0];
